@@ -2,24 +2,22 @@ import React, { useState } from "react";
 
 import "./App.css";
 
-import createConnection, { createWebSocket } from "./connectObservable";
+import createConnection, { createWebSocketSubject } from "./connection";
 
 import Blotter from "./Blotter";
 
 function App() {
   const [connection, setConnection] = useState(null);
 
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
 
   const onConnect = () => {
-    const connection = createConnection(createWebSocket());
+    const connection = createConnection(createWebSocketSubject());
     setConnection(connection);
-    connection.subject.subscribe(console.log);
-    connection.subject.subscribe(setData);
+    connection.stream.subscribe(setData);
   };
 
   const onDisconnect = () => {
-    console.log(connection);
     if (!connection) {
       return;
     }
@@ -31,9 +29,9 @@ function App() {
     <>
       <div className="App">
         <header className="App-header">
-          <button onClick={onConnect}>Connect</button>
+          {!connection && <button onClick={onConnect}>Connect</button>}
 
-          {<button onClick={onDisconnect}>Disconnect</button>}
+          {connection && <button onClick={onDisconnect}>Disconnect</button>}
 
           {/* <ul>
           {data &&
@@ -44,7 +42,7 @@ function App() {
             ))}
         </ul> */}
         </header>
-        {connection && <p>{"Connection Open"}</p>}
+        <p> {connection ? "Connection Open" : "Not connected"}</p>
 
         <Blotter data={data} />
       </div>

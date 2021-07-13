@@ -2,12 +2,12 @@ import { interval, Subject } from "rxjs";
 import { take, map, delay } from "rxjs/operators";
 import { TestScheduler } from "rxjs/testing";
 
-import createConnection from "./connectObservable";
+import createConnection from "./connection";
 
 // socket connection stream tests...
 describe("socket connection", () => {
   const source$ = new Subject();
-  const out$ = createConnection(source$).subject;
+  const out$ = createConnection(source$).stream;
 
   it("should emit mapped data", (done) => {
     const expected = [12, 13];
